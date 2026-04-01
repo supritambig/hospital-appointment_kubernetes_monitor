@@ -1,33 +1,38 @@
 #!/bin/bash
-# ============================================
-# docker_build_push.sh
-# Build and push Docker image to Docker Hub
-# ============================================
 
-DOCKER_HUB_USERNAME="your_dockerhub_username"
-IMAGE_NAME="hospital-appointment"
-TAG="latest"
-FULL_IMAGE="$DOCKER_HUB_USERNAME/$IMAGE_NAME:$TAG"
+set -e
 
-echo "================================================"
-echo " Building Docker image: $FULL_IMAGE"
-echo "================================================"
+IMAGE_NAME="suprit43/suprit-spring-boot"
+DOCKER_USER="suprit43"
 
-docker build -t $FULL_IMAGE .
+echo "🔍 Checking Docker..."
 
-if [ $? -ne 0 ]; then
-  echo "Docker build failed. Exiting."
-  exit 1
-fi
-
-echo ""
-echo "Pushing image to Docker Hub..."
-docker push $FULL_IMAGE
-
-if [ $? -eq 0 ]; then
-  echo ""
-  echo "✅ Image pushed successfully: $FULL_IMAGE"
+if ! command -v docker >/dev/null 2>&1; then
+    echo "🐳 Docker not found. Installing using apt..."
+    sudo apt update
+    sudo apt install docker.io -y
+    sudo systemctl enable docker
+    sudo systemctl start docker
 else
-  echo "❌ Push failed. Make sure you are logged in: docker login"
-  exit 1
+    echo "✅ Docker already installed"
 fi
+
+# Optional but useful (avoid sudo for docker)
+if ! groups $USER | grep -q docker; then
+    sudo usermod -aG docker $USER
+    echo "ℹ️ Added user to docker group. Log out & back in if needed."
+fi
+
+echo "🏗️ Building Docker image..."
+docker build -t $IMAGE_NAME .
+
+echo "🔐 Docker login (password will be prompted)"
+docker login -u $DOCKER_USER
+
+echo "📤 Pushing image to Docker Hub..."
+docker push $IMAGE_NAME
+
+echo "🧹 Removing local image..."
+docker rmi $IMAGE_NAME
+
+echo "✅ All done!"
