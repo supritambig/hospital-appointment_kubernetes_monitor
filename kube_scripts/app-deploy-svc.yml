@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hospital-appointment
-          image: your_dockerhub_username/hospital-appointment:latest
+          image: suprit43/suprit-spring-boot:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8085
@@ -28,8 +28,6 @@ spec:
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
               value: "1234"
-            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
-              value: update
 
 ---
 apiVersion: v1
