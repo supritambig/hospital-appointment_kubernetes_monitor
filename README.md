@@ -41,8 +41,8 @@ hospital-appointment/
 
 ## 🔑 Roles
 
-| Role    | Login                      | Access                                     |
-|---------|----------------------------|--------------------------------------------|
+| Role    | Login                      | Access                                            |
+|---------|----------------------------|-------------------------------------------- ------|
 | Admin   | admin / admin              | Dashboard, manage doctors, patients, appointments |
 | Patient | registered email/password  | Book appointments, view & cancel own appointments |
 
@@ -114,3 +114,27 @@ kubectl describe pod <pod-name>
 - **Patient** — fullName, email, phone, gender, age, password
 - **Doctor**  — fullName, specialization, qualification, phone, email, availableDays, availableTime
 - **Appointment** — date, time, reason, status (PENDING/CONFIRMED/CANCELLED), FK to Patient & Doctor
+
+---
+
+## 📊 Monitoring Setup (Prometheus + Grafana)
+**Add Dependencies**
+```bash
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+```
+
+**Enable Metrics**
+```bash
+management.endpoints.web.exposure.include=*
+management.endpoint.prometheus.enabled=true
+management.metrics.export.prometheus.enabled=true
+```
+
