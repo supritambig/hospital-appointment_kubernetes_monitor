@@ -192,24 +192,32 @@ scrape_configs:
 ```
 
 **Grafana Dashboard Queries**
-```bash
+
 # Requests Per Second
+```bash
 sum(rate(http_server_requests_seconds_count{job="spring-boot-app", uri!="/actuator/prometheus"}[1m]))
-
+```
 # Active Requests
+```bash
 sum(http_server_requests_active_seconds_count{job="spring-boot-app"})
-
+```
 # Average Response Time
+```bash
 sum(rate(http_server_requests_seconds_sum{job="spring-boot-app"}[1m])) /
 sum(rate(http_server_requests_seconds_count{job="spring-boot-app"}[1m]))
-
+```
 # Error Rate
+```bash
 sum(rate(http_server_requests_seconds_count{job="spring-boot-app", status!~"2.."}[1m]))
-
+```
 # JVM Heap Memory
+```bash
 sum(jvm_memory_used_bytes{area="heap", job="spring-boot-app"})
+```
+
 
 **95th Percentile Latency**
+```bash
 histogram_quantile(0.95,
   sum(rate(http_server_requests_seconds_bucket{job="spring-boot-app"}[5m])) by (le)
 )
