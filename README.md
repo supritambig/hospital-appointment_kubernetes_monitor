@@ -153,12 +153,21 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['<APP_SERVER_IP>:30085']
-
-Prometheus Queries
+```
+## Prometheus Queries
+```bash
 up{job="spring-boot-app"}
+```
+```bash
 http_server_requests_seconds_count
+```
+```bash
 rate(http_server_requests_seconds_count[1m])
+```
+```bash
 jvm_memory_used_bytes
+```
+```bash
 jvm_threads_live_threads
 ```
 
