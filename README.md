@@ -138,3 +138,74 @@ management.endpoint.prometheus.enabled=true
 management.metrics.export.prometheus.enabled=true
 ```
 
+**Verify Metrics**
+```bash
+http://<APP_SERVER_IP>:30085/actuator/prometheus
+```
+
+**Prometheus Configuration**
+```bash
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'spring-boot-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['<APP_SERVER_IP>:8085']
+
+Prometheus Queries
+up{job="spring-boot-app"}
+http_server_requests_seconds_count
+rate(http_server_requests_seconds_count[1m])
+jvm_memory_used_bytes
+jvm_threads_live_threads
+```
+
+**Node Exporter Configuration**
+```bash
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['<APP_SERVER_IP>:9100']
+
+  - job_name: 'spring-boot-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['<APP_SERVER_IP>:8085']
+```
+
+**Grafana Dashboard Queries**
+```bash
+# Requests Per Second
+sum(rate(http_server_requests_seconds_count{job="spring-boot-app", uri!="/actuator/prometheus"}[1m]))
+
+# Active Requests
+sum(http_server_requests_active_seconds_count{job="spring-boot-app"})
+
+# Average Response Time
+sum(rate(http_server_requests_seconds_sum{job="spring-boot-app"}[1m])) /
+sum(rate(http_server_requests_seconds_count{job="spring-boot-app"}[1m]))
+
+# Error Rate
+sum(rate(http_server_requests_seconds_count{job="spring-boot-app", status!~"2.."}[1m]))
+
+# JVM Heap Memory
+sum(jvm_memory_used_bytes{area="heap", job="spring-boot-app"})
+
+**95th Percentile Latency**
+histogram_quantile(0.95,
+  sum(rate(http_server_requests_seconds_bucket{job="spring-boot-app"}[5m])) by (le)
+)
+```
+
+🔄 Monitoring Flow
+```bash
+Spring Boot → Actuator → Prometheus → Grafana
