@@ -152,7 +152,7 @@ scrape_configs:
   - job_name: 'spring-boot-app'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['<APP_SERVER_IP>:8085']
+      - targets: ['<APP_SERVER_IP>:30085']
 
 Prometheus Queries
 up{job="spring-boot-app"}
@@ -179,7 +179,7 @@ scrape_configs:
   - job_name: 'spring-boot-app'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['<APP_SERVER_IP>:8085']
+      - targets: ['<APP_SERVER_IP>:30085']
 ```
 
 **Grafana Dashboard Queries**
@@ -209,3 +209,4 @@ histogram_quantile(0.95,
 🔄 Monitoring Flow
 ```bash
 Spring Boot → Actuator → Prometheus → Grafana
+```
